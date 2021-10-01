@@ -67,6 +67,6 @@ public final class Files {
 
     public static void reload() {
         cfg = load(".", "config.yml");
-        zones = load(".", "countdown.yml");
+        zones = load(".", "zones.yml");
     }
 }
