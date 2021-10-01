@@ -63,7 +63,7 @@ public class Events implements Listener {
                         selectionState.replace(u, locations);
                         LogUtil.info("&e已选择第二个区域点 &a(" + location.getX() + ", " + location.getY() + ", "
                                 + location.getZ() + ")&e。");
-                        LogUtil.info("&e执行 &a/specialzone create <名称> <忽略Y轴?>&a 可创建区域。");
+                        LogUtil.info("&e执行 &a/specialzone create <名称> <忽略Y轴?>&e 以创建新的区域。");
                     } else {
                         double[] loc1 = { location.getX(), location.getY(), location.getZ() };
                         double[][] locations = { loc1, {} };
