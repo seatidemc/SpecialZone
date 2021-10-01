@@ -10,6 +10,8 @@ import top.seatide.SpecialZone.Utils.LogUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,10 +30,20 @@ public class Events implements Listener {
     }
 
     @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        var zoneName = Zone.getLocationInZone(event.getBlock().getLocation());
+        if (zoneName != null) {
+            var zone = new Zone(zoneName);
+            if (zone.hasEffectsOn(event.getPlayer(), "noBreak"))
+                event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player p = event.getEntity();
         var zoneName = Zone.getLocationInZone(p.getLocation());
-        if (!zoneName.equals(null)) {
+        if (zoneName != null) {
             var zone = new Zone(zoneName);
             if (zone.hasEffectsOn(p, "keepInv")) {
                 event.setKeepInventory(true);
@@ -47,12 +59,36 @@ public class Events implements Listener {
     }
 
     @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
+        Player p = event.getPlayer();
+        var zoneName = Zone.getLocationInZone(event.getBlock().getLocation());
+        if (zoneName != null) {
+            var zone = new Zone(zoneName);
+            if (zone.hasEffectsOn(p, "noPlace")) event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
+        Player p = event.getPlayer();
+        var zoneName = Zone.getLocationInZone(p.getLocation());
+        if (zoneName != null) {
+            var zone = new Zone(zoneName);
+            if (zone.hasEffectsOn(p, "noIgnite")) {
+                if (event.getItem().getType() == Material.FLINT_AND_STEEL) event.setCancelled(true);
+            }
+            if (zone.hasEffectsOn(p, "noContainer")) {
+                var type = event.getClickedBlock().getType();
+                if (type == Material.CHEST || type == Material.ENDER_CHEST || type == Material.FURNACE || type == Material.CRAFTING_TABLE || type == Material.STONECUTTER) {
+                    event.setCancelled(true);
+                }
+            }
+        }
         if (event.getHand().name().equals("HAND")) {
             ItemStack item = event.getItem();
-            Player p = event.getPlayer();
+            
             UUID u = p.getUniqueId();
-            if (!item.equals(null)) {
+            if (item != null) {
                 if (event.getAction() == Action.RIGHT_CLICK_BLOCK && item.getType() == Material.ARROW) {
                     Block block = event.getClickedBlock();
                     Location location = block.getLocation();
@@ -61,19 +97,21 @@ public class Events implements Listener {
                         double[] loc2 = { location.getX(), location.getY(), location.getZ() };
                         locations[1] = loc2;
                         selectionState.replace(u, locations);
-                        LogUtil.info("&e已选择第二个区域点 &a(" + location.getX() + ", " + location.getY() + ", "
+                        LogUtil.send(p, "&e已选择第二个区域点 &a(" + location.getX() + ", " + location.getY() + ", "
                                 + location.getZ() + ")&e。");
-                        LogUtil.info("&e执行 &a/specialzone create <名称> <忽略Y轴?>&e 以创建新的区域。");
+                        LogUtil.send(p, "&e执行 &a/specialzone create <名称>&e 以创建新的区域。");
                     } else {
                         double[] loc1 = { location.getX(), location.getY(), location.getZ() };
                         double[][] locations = { loc1, {} };
                         selectionState.put(u, locations);
-                        LogUtil.info("&e已选择第一个区域点 &a(" + location.getX() + ", " + location.getY() + ", "
+                        LogUtil.send(p, "&e已选择第一个区域点 &a(" + location.getX() + ", " + location.getY() + ", "
                                 + location.getZ() + ")&e。");
                     }
                 } else {
-                    selectionState.remove(u);
-                    LogUtil.info("&c已取消区域点的选择。");
+                    if (selectionState.containsKey(u)) {
+                        selectionState.remove(u);
+                        LogUtil.send(p, "&c已取消区域点的选择。");
+                    }
                 }
             }
         }
