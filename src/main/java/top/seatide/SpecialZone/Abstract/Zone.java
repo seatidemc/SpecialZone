@@ -40,13 +40,13 @@ public class Zone {
         zones.set(this.name + ".y2", this.y2);
         zones.set(this.name + ".z1", this.z1);
         zones.set(this.name + ".z2", this.z2);
-        Files.save(zones, "zones.yml");
+        Files.save(zones, "./zones.yml");
     }
 
     public void setProperty(String name, boolean value) {
         var zones = Files.zones;
         zones.set(this.name + ".properties." + name, value);
-        Files.save(zones, "zones.yml");
+        Files.save(zones, "./zones.yml");
     }
 
     public boolean getProperty(String name) {
@@ -61,7 +61,7 @@ public class Zone {
         }
         origin.add(name);
         zones.set(this.name + ".exceptions." + property, origin);
-        Files.save(zones, "zones.yml");
+        Files.save(zones, "./zones.yml");
         return true;
     }
 
@@ -73,7 +73,7 @@ public class Zone {
         }
         origin.remove(name);
         zones.set(this.name + ".exceptions." + property, origin);
-        Files.save(zones, "zones.yml");
+        Files.save(zones, "./zones.yml");
         return true;
     }
 
@@ -119,7 +119,7 @@ public class Zone {
     public static void delete(String zoneName) {
         var zone = Files.zones;
         zone.set(zoneName, null);
-        Files.save(zone, "zones.yml");
+        Files.save(zone, "./zones.yml");
     }
 
     public static boolean contains(String zoneName) {
