@@ -64,7 +64,8 @@ public class Events implements Listener {
         var zoneName = Zone.getLocationInZone(event.getBlock().getLocation());
         if (zoneName != null) {
             var zone = new Zone(zoneName);
-            if (zone.hasEffectsOn(p, "noPlace")) event.setCancelled(true);
+            if (zone.hasEffectsOn(p, "noPlace"))
+                event.setCancelled(true);
         }
     }
 
@@ -73,9 +74,10 @@ public class Events implements Listener {
         Player p = event.getPlayer();
         var zoneName = Zone.getLocationInZone(p.getLocation());
         if (zoneName != null) {
+            var item = event.getItem();
             var zone = new Zone(zoneName);
-            if (zone.hasEffectsOn(p, "noIgnite")) {
-                if (event.getItem().getType() == Material.FLINT_AND_STEEL) event.setCancelled(true);
+            if (zone.hasEffectsOn(p, "noIgnite") && item != null) {
+                if (item.getType() == Material.FLINT_AND_STEEL) event.setCancelled(true);
             }
             if (zone.hasEffectsOn(p, "noContainer")) {
                 var type = event.getClickedBlock().getType();
@@ -84,6 +86,7 @@ public class Events implements Listener {
                 }
             }
         }
+        
         if (event.getHand().name().equals("HAND")) {
             ItemStack item = event.getItem();
             
