@@ -43,6 +43,12 @@ public class LogUtil {
         p.sendMessage(translate(a + b + msg));
     }
 
+    public static void sendAll(CommandSender p, String[] msgs) {
+        for (var msg : msgs) {
+            send(p, msg);
+        }
+    }
+
     public static void log(String msg) {
         logger.info(translate(msg));
     }
