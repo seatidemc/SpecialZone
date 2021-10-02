@@ -11,3 +11,5 @@ commands:
 permissions:
   specialzone.command:
     default: op
+  specialzone.exception:
+    default: op

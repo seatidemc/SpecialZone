@@ -31,6 +31,7 @@ public class Events implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
+        if (event.getPlayer().hasPermission("specialzone.exception")) return;
         var zoneName = Zone.getLocationInZone(event.getBlock().getLocation());
         if (zoneName != null) {
             var zone = new Zone(zoneName);
@@ -41,6 +42,7 @@ public class Events implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
+        if (event.getEntity().hasPermission("specialzone.exception")) return;
         Player p = event.getEntity();
         var zoneName = Zone.getLocationInZone(p.getLocation());
         if (zoneName != null) {
@@ -60,6 +62,7 @@ public class Events implements Listener {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
+        if (event.getPlayer().hasPermission("specialzone.exception")) return;
         Player p = event.getPlayer();
         var zoneName = Zone.getLocationInZone(event.getBlock().getLocation());
         if (zoneName != null) {
@@ -74,6 +77,7 @@ public class Events implements Listener {
         Player p = event.getPlayer();
         var zoneName = Zone.getLocationInZone(p.getLocation());
         if (zoneName != null) {
+            if (event.getPlayer().hasPermission("specialzone.exception")) return;
             var item = event.getItem();
             var zone = new Zone(zoneName);
             if (zone.hasEffectsOn(p, "noIgnite") && item != null) {
