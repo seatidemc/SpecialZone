@@ -19,7 +19,7 @@ import top.seatide.SpecialZone.Utils.LogUtil;
 
 public class Commands implements TabExecutor {
     public static List<String> supportedProperties;
-    public final static String[] ARGS_1ST = { "set", "reload", "create", "delete", "addex", "delex" };
+    public final static String[] ARGS_1ST = { "set", "reload", "create", "delete", "addex", "delex", "getex", "info" };
     public final static String[] BOOLEAN_OPTIONS = { "true", "false" };
     public static List<String> zoneNames;
 
@@ -30,8 +30,24 @@ public class Commands implements TabExecutor {
         return result;
     }
 
+    /**
+     * 将一个布尔值转换为 "&atrue" 或者 "&cfalse"。
+     */
+    public String tgfr(boolean input) {
+        return "&" + (input ? "atrue" : "cfalse");
+    }
+
+    public String tgfrx(boolean input, String... custom) {
+        return "&" + (input ? "a" + custom[0] : "c" + custom[1]);
+    }
+
+    public String tgfrx(boolean input) {
+        return "&" + (input ? "a已开启" : "c未开启");
+    }
+
     public Commands() {
-        supportedProperties = Arrays.asList("keepInv", "keepExp", "noBreak", "ignoreY", "noPlace", "noIgnite", "noContainer");
+        supportedProperties = Arrays.asList("keepInv", "keepExp", "noBreak", "ignoreY", "noPlace", "noIgnite",
+                "noContainer");
         zoneNames = new ArrayList<>(Files.zones.getKeys(false));
     }
 
@@ -48,7 +64,7 @@ public class Commands implements TabExecutor {
                 }
             }
             if (args.length == 3) {
-                if (args[0].equals("set") || args[0].equals("delex") || args[0].equals("setex")) {
+                if (args[0].equals("set") || args[0].endsWith("ex")) {
                     return getResult(args[2], supportedProperties);
                 }
                 if (args[0].equals("claim")) {
@@ -177,8 +193,7 @@ public class Commands implements TabExecutor {
                     }
                     var zone = new Zone(name);
                     zone.setProperty(property, value);
-                    LogUtil.send(sender, "成功将区域 &e" + name + "&r 的 &a" + property + "&r 属性设置为 &"
-                            + (value ? "atrue" : "cfalse") + "&r。");
+                    LogUtil.send(sender, "成功将区域 &e" + name + "&r 的 &a" + property + "&r 属性设置为 " + tgfr(value) + "&r。");
                     Files.reload();
                     break;
                 }
@@ -250,6 +265,31 @@ public class Commands implements TabExecutor {
                         LogUtil.send(sender, "&e" + StringUtils.join(result, '、'));
                     }
                     Files.reload();
+                    break;
+                }
+
+                case "info": {
+                    if (!(sender instanceof Player)) {
+                        LogUtil.send(sender, "该指令仅支持玩家执行。");
+                        return true;
+                    }
+                    var p = (Player) sender;
+                    var zoneName = Zone.getLocationInZone(p.getLocation());
+                    if (zoneName == null) {
+                        LogUtil.send(sender, "&c当前所处位置没有已划定的区域。");
+                        return true;
+                    }
+                    var zone = new Zone(zoneName);
+                    String[] msgs = { "&e区域 &a" + zoneName + "&e 的详细信息：",
+                            "&e忽略 Y 轴 — " + tgfrx(zone.getProperty("ignoreY")),
+                            "&e禁止破坏 — " + tgfrx(zone.getProperty("noBreak")),
+                            "&e禁止放置 — " + tgfrx(zone.getProperty("noPlace")),
+                            "&e禁止打开容器 — " + tgfrx(zone.getProperty("noContainer")),
+                            "&e禁止点火 — " + tgfrx(zone.getProperty("noIgnite")),
+                            "&e保留物品栏 — " + tgfrx(zone.getProperty("keepInv")),
+                            "&e保留经验 — " + tgfrx(zone.getProperty("keepExp")), "&e区域范围 — &a(" + zone.x1 + ", " + zone.y1
+                                    + ", " + zone.z1 + ") &b→&a (" + zone.x2 + ", " + zone.y2 + ", " + zone.z2 + ")" };
+                    LogUtil.sendAll(sender, msgs);
                     break;
                 }
 
