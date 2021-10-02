@@ -19,7 +19,7 @@ import top.seatide.SpecialZone.Utils.LogUtil;
 
 public class Commands implements TabExecutor {
     public static List<String> supportedProperties;
-    public final static String[] ARGS = { "set", "reload", "create", "delete", "addex", "delex", "getex", "info" };
+    public final static String[] ARGS = { "set", "reload", "create", "delete", "addex", "delex", "getex", "info", "claim" };
     public final static String[] BOOLEAN_OPTIONS = { "true", "false" };
     public static List<String> zoneNames;
     public final static String[] USER_CMD = { "info" };
