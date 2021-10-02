@@ -31,8 +31,7 @@ public class Commands implements TabExecutor {
     }
 
     public Commands() {
-        supportedProperties = Arrays.asList("keepInv", "keepExp", "noBreak", "ignoreY", "noPlace", "noIgnite",
-                "noContainer");
+        supportedProperties = Arrays.asList("keepInv", "keepExp", "noBreak", "ignoreY", "noPlace", "noIgnite", "noContainer");
         zoneNames = new ArrayList<>(Files.zones.getKeys(false));
     }
 
@@ -149,6 +148,7 @@ public class Commands implements TabExecutor {
                     zone.setProperty("noPlace", value);
                     zone.setProperty("noContainer", value);
                     zone.setProperty("noIgnite", value);
+                    zone.setProperty("noExplosion", value);
                     if (value) {
                         LogUtil.send(sender, "成功将区域 &e" + name + "&r 标记为领地。");
                     } else {

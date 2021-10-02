@@ -5,6 +5,7 @@ api-version: 1.16
 authors: [ Subilan, Constant137 ]
 commands:
   specialzone:
+    aliases: ['sz']
     permission: specialzone.command
     description: SpecialZone main command
     usage: /specialzone <...>
@@ -12,4 +13,6 @@ permissions:
   specialzone.command:
     default: op
   specialzone.exception:
+    default: op
+  specialzone.select:
     default: op

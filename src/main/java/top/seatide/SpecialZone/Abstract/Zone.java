@@ -89,6 +89,10 @@ public class Zone {
         return getProperty(property) && !getExceptions(property).contains(p.getName());
     }
 
+    public boolean hasEffects(String property) {
+        return getProperty(property);
+    }
+
     public static boolean isLocationInZone(String zone, Location loc) {
         var zones = Files.zones.getConfigurationSection(zone);
         double x = loc.getX(), y = loc.getY(), z = loc.getZ(), x1 = zones.getDouble("x1"), x2 = zones.getDouble("x2"),
