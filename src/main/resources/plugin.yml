@@ -11,7 +11,11 @@ commands:
     usage: /specialzone <...>
 permissions:
   specialzone.command:
+    default: true
+  specialzone.admin:
     default: op
+  specialzone.user:
+    default: true
   specialzone.exception:
     default: op
   specialzone.select:

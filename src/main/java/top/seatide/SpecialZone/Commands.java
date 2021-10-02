@@ -19,9 +19,10 @@ import top.seatide.SpecialZone.Utils.LogUtil;
 
 public class Commands implements TabExecutor {
     public static List<String> supportedProperties;
-    public final static String[] ARGS_1ST = { "set", "reload", "create", "delete", "addex", "delex", "getex", "info" };
+    public final static String[] ARGS = { "set", "reload", "create", "delete", "addex", "delex", "getex", "info" };
     public final static String[] BOOLEAN_OPTIONS = { "true", "false" };
     public static List<String> zoneNames;
+    public final static String[] USER_CMD = { "info" };
 
     public List<String> getResult(String arg, List<String> commands) {
         List<String> result = new ArrayList<>();
@@ -53,31 +54,36 @@ public class Commands implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-        var result = new ArrayList<String>();
         if (cmd.getName().equalsIgnoreCase("specialzone")) {
-            if (args.length == 1) {
-                return getResult(args[0], Arrays.asList(ARGS_1ST));
-            }
-            if (args.length == 2) {
-                if (args[0].equals("set") || args[0].equals("delete") || args[0].endsWith("ex")) {
-                    return getResult(args[1], zoneNames);
+            if (sender.hasPermission("specialzone.admin")) {
+                if (args.length == 1) {
+                    return getResult(args[0], Arrays.asList(ARGS));
                 }
-            }
-            if (args.length == 3) {
-                if (args[0].equals("set") || args[0].endsWith("ex")) {
-                    return getResult(args[2], supportedProperties);
+                if (args.length == 2) {
+                    if (args[0].equals("set") || args[0].equals("delete") || args[0].endsWith("ex")) {
+                        return getResult(args[1], zoneNames);
+                    }
                 }
-                if (args[0].equals("claim")) {
-                    return getResult(args[2], Arrays.asList(BOOLEAN_OPTIONS));
+                if (args.length == 3) {
+                    if (args[0].equals("set") || args[0].endsWith("ex")) {
+                        return getResult(args[2], supportedProperties);
+                    }
+                    if (args[0].equals("claim")) {
+                        return getResult(args[2], Arrays.asList(BOOLEAN_OPTIONS));
+                    }
                 }
-            }
-            if (args.length == 4) {
-                if (args[0].equals("set")) {
-                    return getResult(args[3], Arrays.asList(BOOLEAN_OPTIONS));
+                if (args.length == 4) {
+                    if (args[0].equals("set")) {
+                        return getResult(args[3], Arrays.asList(BOOLEAN_OPTIONS));
+                    }
+                }
+            } else {
+                if (args.length == 1) {
+                    return getResult(args[0], Arrays.asList(USER_CMD));
                 }
             }
         }
-        return result;
+        return new ArrayList<>();
     }
 
     @Override
@@ -86,6 +92,12 @@ public class Commands implements TabExecutor {
             if (args.length == 0) {
                 LogUtil.send(sender, "参数不足。");
                 return true;
+            }
+            if (!sender.hasPermission("specialzone.admin")) {
+                if (!List.of(USER_CMD).contains(args[0])) {
+                    LogUtil.send(sender, "&c你没有执行此指令的权限。");
+                    return true;
+                }
             }
             switch (args[0]) {
                 case "create": {
